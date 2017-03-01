@@ -19,13 +19,22 @@ use yii\web\IdentityInterface;
  * @property integer $status
  * @property integer $created_at
  * @property integer $updated_at
+ * @property integer $last_login_at
+ * @property integer $role
  * @property string $password write-only password
  */
 class User extends ActiveRecord implements IdentityInterface
 {
-    const STATUS_DELETED = 0;
-    const STATUS_ACTIVE = 10;
+    const STATUS_ACTIVE = 1;
+    const STATUS_BANNED = 2;
+    const STATUS_INACTIVE_MONTH = 3;
+    const STATUS_INACTIVE_THREE_MONTH = 4;
+    const STATUS_INACTIVE_SIX_MONTH = 5;
+    const STATUS_INACTIVE_YEAR = 6;
 
+    const ROLE_DEFAULT = 1;
+    const ROLE_ADVANCED = 2;
+    const ROLE_ADMIN = 9;
 
     /**
      * @inheritdoc
@@ -33,7 +42,7 @@ class User extends ActiveRecord implements IdentityInterface
     public static function tableName()
     {
         return '{{%user}}';
-    }
+}
 
     /**
      * @inheritdoc
@@ -51,9 +60,20 @@ class User extends ActiveRecord implements IdentityInterface
     public function rules()
     {
         return [
+            [['username', 'auth_key', 'password_hash', 'email'], 'required'],
             ['status', 'default', 'value' => self::STATUS_ACTIVE],
-            ['status', 'in', 'range' => [self::STATUS_ACTIVE, self::STATUS_DELETED]],
+            ['status', 'in', 'range' => [self::STATUS_ACTIVE, self::STATUS_BANNED, self::STATUS_INACTIVE_MONTH, self::STATUS_INACTIVE_THREE_MONTH, self::STATUS_INACTIVE_SIX_MONTH, self::STATUS_INACTIVE_YEAR]],
+            ['role', 'default', 'value' => self::ROLE_DEFAULT],
+            ['role', 'in', 'range' => [self::ROLE_DEFAULT, self::ROLE_ADVANCED, self::ROLE_ADMIN]],
         ];
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function afterLogin($event)
+    {
+        $event->identity->updateAttributes(['last_login_at' => time(), 'status' => self::STATUS_ACTIVE]);
     }
 
     /**
@@ -61,7 +81,7 @@ class User extends ActiveRecord implements IdentityInterface
      */
     public static function findIdentity($id)
     {
-        return static::findOne(['id' => $id, 'status' => self::STATUS_ACTIVE]);
+        return static::findOne(['id' => $id]);
     }
 
     /**
@@ -80,7 +100,7 @@ class User extends ActiveRecord implements IdentityInterface
      */
     public static function findByUsername($username)
     {
-        return static::findOne(['username' => $username, 'status' => self::STATUS_ACTIVE]);
+        return static::findOne(['username' => $username]);
     }
 
     /**
