@@ -25,7 +25,7 @@ class LoginForm extends Model
             // username and password are both required
             [['username', 'password'], 'required'],
             ['username', 'string', 'min' => 2, 'max' => 20],
-            ['username', 'match', 'pattern' => '/^[a-z0-9_-]*[a-z0-9]+[a-z0-9_-]*$/i', 'message' => 'Only Latin letters, digits, underscore(_) and hyphen(-) are allowed.'],
+            ['username', 'match', 'pattern' => '/^[a-z0-9_-]*[a-z0-9 ]+[a-z0-9_-]*$/i', 'message' => 'Only Latin letters, digits, underscore(_) and hyphen(-) are allowed.'],
             // rememberMe must be a boolean value
             ['rememberMe', 'boolean'],
             // password is validated by validatePassword()

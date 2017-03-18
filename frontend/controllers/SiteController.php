@@ -29,13 +29,8 @@ class SiteController extends Controller
         return [
             'access' => [
                 'class' => AccessControl::className(),
-                'only' => ['logout', 'signup'],
+                'only' => ['logout'],
                 'rules' => [
-                    [
-                        'actions' => ['signup'],
-                        'allow' => true,
-                        'roles' => ['?'],
-                    ],
                     [
                         'actions' => ['logout'],
                         'allow' => true,
@@ -92,10 +87,16 @@ class SiteController extends Controller
         if (!Yii::$app->user->isGuest) {
             return $this->goHome();
         }
+        
+        if (Yii::$app->request->getIsGet()) {
+            Yii::$app->user->setReturnUrl(Yii::$app->request->getReferrer());
+        }
 
         $model = new LoginForm();
         if ($model->load(Yii::$app->request->post()) && $model->login()) {
-            return $this->goBack();
+            Yii::$app->session->setFlash('success', 'Thank you!');
+            //return $this->goBack();
+            return $this->redirect(Yii::$app->user->getReturnUrl());
         } else {
             return $this->render('login', [
                 'model' => $model,
@@ -155,16 +156,25 @@ class SiteController extends Controller
      */
     public function actionSignup()
     {
+        /*if (Yii::$app->request->getIsGet()) {
+            Yii::$app->user->setReturnUrl(Yii::$app->request->getReferrer());
+        }*/
+        if (!Yii::$app->user->isGuest) {
+            return $this->goHome();
+        }
+
         $model = new SignupForm();
-        if (Yii::$app->request->isAjax && $model->load(Yii::$app->request->post())) {
+        /*if (Yii::$app->request->isAjax && $model->load(Yii::$app->request->post())) {
             Yii::$app->response->format = Response::FORMAT_JSON;
             return ActiveForm::validate($model);
-        }
+        }*/
         
         if ($model->load(Yii::$app->request->post())) {
             if ($user = $model->signup()) {
                 if (Yii::$app->getUser()->login($user)) {
-                    return $this->goHome();
+                    //return $this->goHome();
+                    Yii::$app->session->setFlash('success', 'Thank you!');
+                    return $this->redirect(['user/profile', 'username' => Yii::$app->user->username]);
                 }
             }
         }

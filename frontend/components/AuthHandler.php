@@ -34,7 +34,9 @@ class AuthHandler
             'source' => $this->client->getId(),
             'source_id' => $id,
         ])->one();
-
+/*\yii\helpers\BaseVarDumper::dump(is_array($attributes), 10, true);
+\yii\helpers\BaseVarDumper::dump($attributes, 10, true);
+exit;*/
         if (Yii::$app->user->isGuest) {
             if ($auth) { // login
                 /* @var User $user */
@@ -66,7 +68,9 @@ class AuthHandler
                         ]);
                         if ($auth->save()) {
                             $transaction->commit();
+                            Yii::$app->session->setFlash('success', 'Thank you!');
                             Yii::$app->user->login($user, Yii::$app->params['user.rememberMeDuration']);
+                            return Yii::$app->controller->redirect(['user/index']);
                         } else {
                             Yii::$app->getSession()->setFlash('error', [
                                 Yii::t('app', 'Unable to save {client} account: {errors}', [

@@ -73,7 +73,11 @@ class User extends ActiveRecord implements IdentityInterface
      */
     public function afterLogin($event)
     {
-        $event->identity->updateAttributes(['last_login_at' => time(), 'status' => self::STATUS_ACTIVE]);
+        $event->identity->updateAttributes([
+            'last_login_at' => time(),
+            'status' => self::STATUS_ACTIVE,
+            'last_login_ip' => inet_pton(Yii::$app->request->getUserIP())
+        ]);
     }
 
     /**
