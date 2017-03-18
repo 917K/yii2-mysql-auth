@@ -22,7 +22,7 @@ class UserController extends \yii\web\Controller
             ],
         ];
     }*/
-    public function beforeAction($action)
+    /*public function beforeAction($action)
     {
         if (Yii::$app->user->isGuest) {
             return Yii::$app->user->loginRequired();
@@ -32,13 +32,20 @@ class UserController extends \yii\web\Controller
             return false;
         }
 
-        // other custom code here
+        return true;
+    }*/
 
-        return true; // or false to not run the action
+    public function checkAccess()
+    {
+        if (Yii::$app->user->isGuest) {
+            Yii::$app->user->setReturnUrl(Yii::$app->controller->route);
+            return Yii::$app->user->loginRequired();
+        }
     }
-    
+
     public function actionIndex()
     {
+        $this->checkAccess();
         return $this->render('index');
     }
 
@@ -49,6 +56,7 @@ class UserController extends \yii\web\Controller
 
     public function actionSettings()
     {
+        $this->checkAccess();
         return $this->render('settings');
     }
 }

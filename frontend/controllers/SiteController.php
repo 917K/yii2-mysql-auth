@@ -38,12 +38,12 @@ class SiteController extends Controller
                     ],
                 ],
             ],
-            'verbs' => [
+            /*'verbs' => [
                 'class' => VerbFilter::className(),
                 'actions' => [
                     'logout' => ['post'],
                 ],
-            ],
+            ],*/
         ];
     }
 
@@ -87,14 +87,13 @@ class SiteController extends Controller
         if (!Yii::$app->user->isGuest) {
             return $this->goHome();
         }
-        
-        if (Yii::$app->request->getIsGet()) {
+
+        if (Yii::$app->request->getIsGet() && null != Yii::$app->request->getReferrer()) {
             Yii::$app->user->setReturnUrl(Yii::$app->request->getReferrer());
         }
 
         $model = new LoginForm();
         if ($model->load(Yii::$app->request->post()) && $model->login()) {
-            Yii::$app->session->setFlash('success', 'Thank you!');
             //return $this->goBack();
             return $this->redirect(Yii::$app->user->getReturnUrl());
         } else {
@@ -174,7 +173,7 @@ class SiteController extends Controller
                 if (Yii::$app->getUser()->login($user)) {
                     //return $this->goHome();
                     Yii::$app->session->setFlash('success', 'Thank you!');
-                    return $this->redirect(['user/profile', 'username' => Yii::$app->user->username]);
+                    return $this->redirect(['user/profile', 'username' => Yii::$app->user->identity->username]);
                 }
             }
         }
