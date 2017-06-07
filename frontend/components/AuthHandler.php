@@ -27,7 +27,7 @@ class AuthHandler
         $attributes = $this->client->getUserAttributes();
         $email = ArrayHelper::getValue($attributes, 'email');
         $id = ArrayHelper::getValue($attributes, 'id');
-        $username = ArrayHelper::getValue($attributes, 'name');
+        $username = str_replace(' ', '_', ArrayHelper::getValue($attributes, 'name'));
 
         /* @var Auth $auth */
         $auth = Auth::find()->where([

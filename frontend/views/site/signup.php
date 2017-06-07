@@ -31,7 +31,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
                 <?= $form->field($model, 'password')->passwordInput() ?>
 
-                <?= $form->field($model, 'password_repeat')->passwordInput()->label('Repeat Password') ?>
+                <?= $form->field($model, 'passwordRepeat')->passwordInput()->label('Repeat Password') ?>
             
                 <?= 
                     $form->field($model, 'reCaptcha')->widget(

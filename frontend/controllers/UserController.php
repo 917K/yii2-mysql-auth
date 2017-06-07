@@ -4,6 +4,7 @@ namespace frontend\controllers;
 
 use yii\filters\AccessControl;
 use Yii;
+use frontend\models\ChangePasswordForm;
 
 class UserController extends \yii\web\Controller
 {
@@ -49,7 +50,7 @@ class UserController extends \yii\web\Controller
         return $this->render('index');
     }
 
-    public function actionProfile()
+    public function actionProfile($username)
     {
         return $this->render('profile');
     }
@@ -57,6 +58,26 @@ class UserController extends \yii\web\Controller
     public function actionSettings()
     {
         $this->checkAccess();
-        return $this->render('settings');
+        $tzlist = array();
+        for($i = -12; $i<= 12;) {
+            $tzlist[2 * $i] = $i;
+            $i = $i + 0.5;
+        }
+
+        $request = Yii::$app->request;
+        $changePasswordModel = new ChangePasswordForm();
+        $changePasswordFormName = $changePasswordModel->formName();
+        if($request->isPost) {
+            if ($request->post($changePasswordFormName)) {
+                if ($changePasswordModel->load($request->post()) && $changePasswordModel->validate() && $changePasswordModel->changePassword()) {
+                    Yii::$app->session->setFlash('success', 'New password was saved.');
+                }
+            }
+        }
+        return $this->render('settings', [
+            'timezones' => $tzlist,
+            'changePasswordModel' => $changePasswordModel,
+            'changePasswordFormName' => $changePasswordFormName,
+        ]);
     }
 }

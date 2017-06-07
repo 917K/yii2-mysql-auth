@@ -16,7 +16,7 @@ return [
                 'logout' => 'site/logout',
                 'signup' => 'site/signup',
                 'my' => 'user/index',
-                'my/settings' => 'user/settings',
+                'my/<action>' => 'user/<action>',
                 'user/<username>' => 'user/profile',
             ],
         ],

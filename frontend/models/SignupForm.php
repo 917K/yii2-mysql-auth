@@ -13,7 +13,7 @@ class SignupForm extends Model
     public $username;
     public $email;
     public $password;
-    public $password_repeat;
+    public $passwordRepeat;
     public $reCaptcha;
 
 
@@ -38,8 +38,8 @@ class SignupForm extends Model
             ['password', 'required'],
             ['password', 'string', 'min' => 6],
             
-            ['password_repeat', 'required'],
-            ['password_repeat', 'compare', 'compareAttribute' => 'password'],
+            ['passwordRepeat', 'required'],
+            ['passwordRepeat', 'compare', 'compareAttribute' => 'password'],
             
             [['reCaptcha'], \himiklab\yii2\recaptcha\ReCaptchaValidator::className(), 'secret' => Yii::$app->params['googleRecaptchaSecret']],
             ['reCaptcha', 'required'],
