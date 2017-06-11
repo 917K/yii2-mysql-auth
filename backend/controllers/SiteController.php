@@ -5,7 +5,7 @@ use Yii;
 use yii\web\Controller;
 use yii\filters\VerbFilter;
 use yii\filters\AccessControl;
-use common\models\LoginForm;
+use backend\models\LoginForm;
 
 /**
  * Site controller
@@ -74,12 +74,17 @@ class SiteController extends Controller
             return $this->goHome();
         }
 
+        if (Yii::$app->request->getIsGet() && null != Yii::$app->request->getReferrer()) {
+            Yii::$app->user->setReturnUrl(Yii::$app->request->getReferrer());
+        }
+
         $model = new LoginForm();
-        if ($model->load(Yii::$app->request->post()) && $model->login()) {
-            return $this->goBack();
+        if ($model->load(Yii::$app->request->post()) && $model->login(true)) {
+            return $this->redirect(Yii::$app->user->getReturnUrl());
         } else {
             return $this->render('login', [
                 'model' => $model,
+                'googleRecaptchaPublic' => Yii::$app->params['googleRecaptchaPublic'],
             ]);
         }
     }

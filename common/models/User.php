@@ -6,6 +6,7 @@ use yii\base\NotSupportedException;
 use yii\behaviors\TimestampBehavior;
 use yii\db\ActiveRecord;
 use yii\web\IdentityInterface;
+use backend\models\UserAdmin;
 
 /**
  * User model
@@ -102,9 +103,14 @@ class User extends ActiveRecord implements IdentityInterface
      * @param string $username
      * @return static|null
      */
-    public static function findByUsername($username)
+    public static function findByUsername($username, $fromAdminPanel = false)
     {
-        return static::findOne(['username' => $username]);
+        $user = static::findOne(['username' => $username]);
+        /* check is admin */
+        if ($fromAdminPanel && $user && !UserAdmin::findByUserId($user->id)) {
+            return null;
+        }
+        return $user;
     }
 
     /**

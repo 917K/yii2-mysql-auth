@@ -25,7 +25,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 'id' => 'form-signup',]
             ); ?>
 
-                <?= $form->field($model, 'username')->textInput(['autofocus' => true]) ?>
+                <?= $form->field($model, 'username')->textInput() ?>
 
                 <?= $form->field($model, 'email') ?>
 
