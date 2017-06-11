@@ -58,4 +58,15 @@ class Auth extends \yii\db\ActiveRecord
     {
         return $this->hasOne(User::className(), ['id' => 'user_id']);
     }
+
+    /**
+     * Finds user auths by user_id
+     *
+     * @param integer $user_id
+     * @return array
+     */
+    public static function findByUserId($user_id)
+    {
+        return static::findAll(['user_id' => $user_id]);
+    }
 }

@@ -3,12 +3,28 @@
 use yii\helpers\Html;
 use yii\bootstrap\ActiveForm;
 
-$this->title = 'Change password';
 ?>
 <h1>user/settings</h1>
 
+<?php if (!empty($activeSocials)) { ?>
+<div class="site-active-socials">
+    <h3>Bound socials networks</h3>
+    <?php foreach ($activeSocials as $activeSocial => $data) { ?>
+    <div class="row">
+        <div class="col-lg-5">
+            <div class="form-group">
+                <?= Html::a($activeSocial, '/site/auth?authclient='.$activeSocial, ['class' => 'btn btn-primary btn-block']) ?>
+            </div>
+        </div>
+    </div>
+</div>
+<?php
+    }
+}
+?>
+
 <div class="site-reset-password">
-    <h3><?= Html::encode($this->title) ?></h3>
+    <h3>Change password</h3>
 
     <div class="row">
         <div class="col-lg-5">

@@ -5,6 +5,7 @@ namespace frontend\controllers;
 use yii\filters\AccessControl;
 use Yii;
 use frontend\models\ChangePasswordForm;
+use frontend\models\Auth;
 
 class UserController extends \yii\web\Controller
 {
@@ -58,6 +59,15 @@ class UserController extends \yii\web\Controller
     public function actionSettings()
     {
         $this->checkAccess();
+        $userAccounts = Auth::findByUserId(Yii::$app->user->identity->id);
+        $activeSocials = Yii::$app->components['authClientCollection']['clients'];
+
+        foreach ($userAccounts as $userAccount) {
+            if (isset($activeSocials[$userAccount->source])) {
+                unset($activeSocials[$userAccount->source]);
+            }
+        }
+
         $tzlist = array();
         for($i = -12; $i<= 12;) {
             $tzlist[2 * $i] = $i;
@@ -78,6 +88,7 @@ class UserController extends \yii\web\Controller
             'timezones' => $tzlist,
             'changePasswordModel' => $changePasswordModel,
             'changePasswordFormName' => $changePasswordFormName,
+            'activeSocials' => $activeSocials,
         ]);
     }
 }
