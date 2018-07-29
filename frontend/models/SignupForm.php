@@ -26,14 +26,14 @@ class SignupForm extends Model
             ['username', 'trim'],
             ['username', 'required'],
             ['username', 'match', 'pattern' => '/^[a-z0-9_-]*[a-z0-9]+[a-z0-9_-]*$/i', 'message' => 'Only Latin letters, digits, underscore(_) and hyphen(-) are allowed.'],
-            ['username', 'unique', 'targetClass' => '\common\models\User', 'message' => 'This username has already been taken.'],
+            ['username', 'unique', 'targetClass' => User::className(), 'message' => 'This username has already been taken.'],
             ['username', 'string', 'min' => 2, 'max' => 20],
 
             ['email', 'trim'],
             ['email', 'required'],
             ['email', 'email'],
             ['email', 'string', 'max' => 255],
-            ['email', 'unique', 'targetClass' => '\common\models\User', 'message' => 'This email address has already been taken.'],
+            ['email', 'unique', 'targetClass' => User::className(), 'message' => 'This email address has already been taken.'],
 
             ['password', 'required'],
             ['password', 'string', 'min' => 6],
@@ -49,20 +49,18 @@ class SignupForm extends Model
     /**
      * Signs user up.
      *
-     * @return User|null the saved model or null if saving fails
+     * @return User
      */
     public function signup()
     {
-        if (!$this->validate()) {
-            return null;
-        }
-        
         $user = new User();
         $user->username = $this->username;
         $user->email = $this->email;
         $user->setPassword($this->password);
         $user->generateAuthKey();
-        
-        return $user->save() ? $user : null;
+        $user->role_id = \common\models\UserRole::USER_ROLE_BASE;
+        $user->status_id = \common\models\UserStatus::USER_STATUS_ACTIVE;
+        $user->save();
+        return $user;
     }
 }

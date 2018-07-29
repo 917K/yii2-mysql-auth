@@ -6,7 +6,9 @@ use yii\base\NotSupportedException;
 use yii\behaviors\TimestampBehavior;
 use yii\db\ActiveRecord;
 use yii\web\IdentityInterface;
-use backend\models\UserAdmin;
+use backend\models\UserAdmin as UserAdmin;
+use common\models\UserRole as UserRole;
+use common\models\UserStatus as UserStatus;
 
 /**
  * User model
@@ -17,26 +19,15 @@ use backend\models\UserAdmin;
  * @property string $password_reset_token
  * @property string $email
  * @property string $auth_key
- * @property integer $status
+ * @property integer $status_id
  * @property integer $created_at
  * @property integer $updated_at
  * @property integer $last_login_at
- * @property integer $role
+ * @property integer $role_id
  * @property string $password write-only password
  */
 class User extends ActiveRecord implements IdentityInterface
 {
-    const STATUS_ACTIVE = 1;
-    const STATUS_BANNED = 2;
-    const STATUS_INACTIVE_MONTH = 3;
-    const STATUS_INACTIVE_THREE_MONTH = 4;
-    const STATUS_INACTIVE_SIX_MONTH = 5;
-    const STATUS_INACTIVE_YEAR = 6;
-
-    const ROLE_DEFAULT = 1;
-    const ROLE_ADVANCED = 2;
-    const ROLE_ADMIN = 9;
-
     /**
      * @inheritdoc
      */
@@ -62,10 +53,10 @@ class User extends ActiveRecord implements IdentityInterface
     {
         return [
             [['username', 'auth_key', 'password_hash', 'email'], 'required'],
-            ['status', 'default', 'value' => self::STATUS_ACTIVE],
-            ['status', 'in', 'range' => [self::STATUS_ACTIVE, self::STATUS_BANNED, self::STATUS_INACTIVE_MONTH, self::STATUS_INACTIVE_THREE_MONTH, self::STATUS_INACTIVE_SIX_MONTH, self::STATUS_INACTIVE_YEAR]],
-            ['role', 'default', 'value' => self::ROLE_DEFAULT],
-            ['role', 'in', 'range' => [self::ROLE_DEFAULT, self::ROLE_ADVANCED, self::ROLE_ADMIN]],
+            ['status_id', 'default', 'value' => UserStatus::USER_STATUS_ACTIVE],
+            ['role_id', 'default', 'value' => UserRole::USER_ROLE_BASE],
+            [['role_id'], 'exist', 'targetClass' => UserRole::className(), 'targetAttribute' => ['role_id' => 'id']],
+            [['status_id'], 'exist', 'targetClass' => UserStatus::className(), 'targetAttribute' => ['status_id' => 'id']],
         ];
     }
 
@@ -76,7 +67,7 @@ class User extends ActiveRecord implements IdentityInterface
     {
         $event->identity->updateAttributes([
             'last_login_at' => time(),
-            'status' => self::STATUS_ACTIVE,
+            'status_id' => UserStatus::USER_STATUS_ACTIVE,
             'last_login_ip' => inet_pton(Yii::$app->request->getUserIP())
         ]);
     }
@@ -127,7 +118,7 @@ class User extends ActiveRecord implements IdentityInterface
 
         return static::findOne([
             'password_reset_token' => $token,
-            'status' => self::STATUS_ACTIVE,
+            'status_id' => UserStatus::USER_STATUS_ACTIVE,
         ]);
     }
 

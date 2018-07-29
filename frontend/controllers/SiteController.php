@@ -168,12 +168,15 @@ class SiteController extends Controller
             return ActiveForm::validate($model);
         }*/
         
-        if ($model->load(Yii::$app->request->post())) {
-            if ($user = $model->signup()) {
-                if (Yii::$app->getUser()->login($user)) {
-                    //return $this->goHome();
-                    Yii::$app->session->setFlash('success', 'Thank you!');
-                    return $this->redirect(['user/profile', 'username' => Yii::$app->user->identity->username]);
+        if (Yii::$app->request->isPost) {
+            if ($model->load(Yii::$app->request->post()) && $model->validate()) {
+                $user = $model->signup();
+                if (!$user->getErrors()) {
+                    if (Yii::$app->getUser()->login($user)) {
+                        //return $this->goHome();
+                        Yii::$app->session->setFlash('success', 'Thank you!');
+                        return $this->redirect(['user/profile', 'username' => Yii::$app->user->identity->username]);
+                    }
                 }
             }
         }

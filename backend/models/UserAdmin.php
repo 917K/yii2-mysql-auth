@@ -3,16 +3,16 @@
 namespace backend\models;
 
 use Yii;
+use common\models\User as User;
 
 /**
  * This is the model class for table "user_admin".
  *
  * @property integer $id
  * @property integer $user_id
- * @property integer $role_id
- * @property integer $created_at
+ * @property integer $admin_role_id
+ * @property string $created_at
  *
- * @property UserAdminRole $role
  * @property User $user
  */
 class UserAdmin extends \yii\db\ActiveRecord
@@ -31,10 +31,11 @@ class UserAdmin extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['user_id', 'role_id', 'created_at'], 'required'],
-            [['user_id', 'role_id', 'created_at'], 'integer'],
-            [['role_id'], 'exist', 'skipOnError' => true, 'targetClass' => UserAdminRole::className(), 'targetAttribute' => ['role_id' => 'id']],
+            [['user_id', 'admin_role_id'], 'required'],
+            [['user_id', 'admin_role_id'], 'integer'],
+            [['created_at'], 'safe'],
             [['user_id'], 'exist', 'skipOnError' => true, 'targetClass' => User::className(), 'targetAttribute' => ['user_id' => 'id']],
+            [['admin_role_id'], 'exist', 'skipOnError' => true, 'targetClass' => AdminRole::className(), 'targetAttribute' => ['admin_role_id' => 'id']],
         ];
     }
 
@@ -46,7 +47,7 @@ class UserAdmin extends \yii\db\ActiveRecord
         return [
             'id' => 'ID',
             'user_id' => 'User ID',
-            'role_id' => 'Role ID',
+            'admin_role_id' => 'User Role Admin ID',
             'created_at' => 'Created At',
         ];
     }
@@ -56,7 +57,7 @@ class UserAdmin extends \yii\db\ActiveRecord
      */
     public function getRole()
     {
-        return $this->hasOne(UserAdminRole::className(), ['id' => 'role_id']);
+        return $this->hasOne(AdminRole::className(), ['id' => 'admin_role_id']);
     }
 
     /**
