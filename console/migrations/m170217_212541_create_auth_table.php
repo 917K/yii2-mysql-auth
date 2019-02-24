@@ -24,8 +24,6 @@ class m170217_212541_create_auth_table extends Migration
             'source' => $this->string()->notNull(),
             'source_id' => $this->string()->notNull(),
         ], $tableOptions);
-        
-        $this->addForeignKey('fk-auth-user_id-user-id', 'auth', 'user_id', 'user', 'id', 'CASCADE', 'CASCADE');
     }
 
     /**

@@ -17,37 +17,10 @@ class m170620_185533_alter_user_table_add_foreign_keys extends Migration
             'role_id',
             'integer'
         );
-
-        // add foreign keys for table `user`
-        $this->addForeignKey(
-            'fk-user-role_id',
-            'user',
-            'role_id',
-            'user_role',
-            'id',
-            'CASCADE'
-        );
-
-        $this->addForeignKey(
-            'fk-user-status_id',
-            'user',
-            'status_id',
-            'user_status',
-            'id',
-            'CASCADE'
-        );
     }
 
     public function down()
     {
-        $this->dropForeignKey(
-            'fk-user-status_id',
-            'user'
-        );
-
-        $this->dropForeignKey(
-            'fk-user-role_id',
-            'user'
-        );
+        return false;
     }
 }

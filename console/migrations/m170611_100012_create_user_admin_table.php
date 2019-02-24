@@ -29,16 +29,6 @@ class m170611_100012_create_user_admin_table extends Migration
             'user_admin',
             'user_id'
         );
-
-        // add foreign key for table `user`
-        $this->addForeignKey(
-            'fk-user_admin-user_id',
-            'user_admin',
-            'user_id',
-            'user',
-            'id',
-            'CASCADE'
-        );
     }
 
     /**
@@ -46,12 +36,6 @@ class m170611_100012_create_user_admin_table extends Migration
      */
     public function down()
     {
-        // drops foreign key for table `user`
-        $this->dropForeignKey(
-            'fk-user_admin-user_id',
-            'user_admin'
-        );
-
         // drops index for column `user_id`
         $this->dropIndex(
             'idx-user_admin-user_id',
