@@ -201,6 +201,22 @@ class User extends ActiveRecord implements IdentityInterface
     }
 
     /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getStatus()
+    {
+        return $this->hasOne(\UserStatus::className(), ['id' => 'status_id']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getRole()
+    {
+        return $this->hasOne(\UserRole::className(), ['id' => 'role_id']);
+    }
+
+    /**
      * Removes password reset token
      */
     public function removePasswordResetToken()
