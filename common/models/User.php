@@ -6,9 +6,9 @@ use yii\base\NotSupportedException;
 use yii\behaviors\TimestampBehavior;
 use yii\db\ActiveRecord;
 use yii\web\IdentityInterface;
-use backend\models\UserAdmin as UserAdmin;
-use common\models\UserRole as UserRole;
-use common\models\UserStatus as UserStatus;
+use backend\models\UserAdmin;
+use common\models\UserRole;
+use common\models\UserStatus;
 
 /**
  * User model
@@ -68,7 +68,7 @@ class User extends ActiveRecord implements IdentityInterface
         $event->identity->updateAttributes([
             'last_login_at' => time(),
             'status_id' => UserStatus::USER_STATUS_ACTIVE,
-            'last_login_ip' => inet_pton(Yii::$app->request->getUserIP())
+            'last_login_ip' => Yii::$app->request->getUserIP(),
         ]);
     }
 
@@ -205,7 +205,7 @@ class User extends ActiveRecord implements IdentityInterface
      */
     public function getStatus()
     {
-        return $this->hasOne(\UserStatus::className(), ['id' => 'status_id']);
+        return $this->hasOne(UserStatus::className(), ['id' => 'status_id']);
     }
 
     /**
@@ -213,7 +213,7 @@ class User extends ActiveRecord implements IdentityInterface
      */
     public function getRole()
     {
-        return $this->hasOne(\UserRole::className(), ['id' => 'role_id']);
+        return $this->hasOne(UserRole::className(), ['id' => 'role_id']);
     }
 
     /**
@@ -222,5 +222,24 @@ class User extends ActiveRecord implements IdentityInterface
     public function removePasswordResetToken()
     {
         $this->password_reset_token = null;
+    }
+
+    public function attributeLabels()
+    {
+        return [
+            'id' => 'ID',
+            'username' => 'Username',
+            'password_hash' => 'Password hash',
+            'password_reset_token' => 'Password reset token',
+            'email' => 'Email',
+            'auth_key' => 'Auth key',
+            'status_id' => 'Status',
+            'created_at' => 'Created at',
+            'updated_at' => 'Updated at',
+            'last_login_at' => 'Last login at',
+            'role_id' => 'Role',
+            'password' => 'Password',
+            'last_login_ip' => 'Last IP',
+        ];
     }
 }
