@@ -1,25 +1,29 @@
 <?php
 
-namespace backend\models;
+namespace backend\models\search;
 
 use Yii;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
+use backend\models\UserAdmin;
 use common\models\User;
 
 /**
- * UserSearch represents the model behind the search form about `common\models\User`.
+ * UserAdminSearch represents the model behind the search form about `\backend\models\UserAdmin`.
  */
-class UserSearch extends User
+class UserAdminSearch extends UserAdmin
 {
+
+    public $username;
+
     /**
      * @inheritdoc
      */
     public function rules()
     {
         return [
-            [['id', 'status_id', 'created_at', 'updated_at', 'last_login_at', 'role_id'], 'integer'],
-            [['username', 'auth_key', 'password_hash', 'password_reset_token', 'email', 'last_login_ip'], 'safe'],
+            [['id', 'user_id', 'admin_role_id'], 'integer'],
+            [['created_at, username'], 'safe'],
         ];
     }
 
@@ -41,13 +45,18 @@ class UserSearch extends User
      */
     public function search($params)
     {
-        $query = User::find();
-
+        $query = UserAdmin::find();
+        $query->joinWith('user');
         // add conditions that should always apply here
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
         ]);
+
+        $dataProvider->sort->attributes['username'] = [
+            'asc' => ['user.username' => SORT_ASC],
+            'desc' => ['user.username' => SORT_DESC],
+        ];
 
         $this->load($params);
 
@@ -60,16 +69,15 @@ class UserSearch extends User
         // grid filtering conditions
         $query->andFilterWhere([
             'id' => $this->id,
-            'status_id' => $this->status_id,
+            'user_id' => $this->user_id,
+            'admin_role_id' => $this->admin_role_id,
             'created_at' => $this->created_at,
-            'updated_at' => $this->updated_at,
-            'last_login_at' => $this->last_login_at,
-            'role_id' => $this->role_id,
         ]);
-
-        $query->andFilterWhere(['like', 'username', $this->username])
-            ->andFilterWhere(['like', 'email', $this->email])
-            ->andFilterWhere(['like', 'last_login_ip', $this->last_login_ip]);
+        /*$query->andFilterWhere(['like', 'user.username', $this->username]);
+        $query->joinWith(['user' => function ($q) {
+                //\common\helpers\Dev::dump($this->user);exit;
+            $q->andFilterWhere(['like', 'user.username', $this->username]);
+        }]);*/
 
         return $dataProvider;
     }

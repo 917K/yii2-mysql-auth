@@ -43,6 +43,8 @@ return [
             'rules' => [
                 'users' => 'user/index',
                 'user/<action>/<id:\d+>' => 'user/<action>',
+                'admins' => 'admin/index',
+                'admin/<action>/<id:\d+>' => 'admin/<action>',
                 '<controller>/<action>' => '<controller>/<action>',
             ],
         ],

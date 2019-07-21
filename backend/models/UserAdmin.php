@@ -3,7 +3,8 @@
 namespace backend\models;
 
 use Yii;
-use common\models\User as User;
+use common\models\User;
+use yii\behaviors\TimestampBehavior;
 
 /**
  * This is the model class for table "user_admin".
@@ -28,6 +29,16 @@ class UserAdmin extends \yii\db\ActiveRecord
     /**
      * @inheritdoc
      */
+    public function behaviors()
+    {
+        return [
+            TimestampBehavior::className(),
+        ];
+    }
+
+    /**
+     * @inheritdoc
+     */
     public function rules()
     {
         return [
@@ -47,7 +58,7 @@ class UserAdmin extends \yii\db\ActiveRecord
         return [
             'id' => 'ID',
             'user_id' => 'User ID',
-            'admin_role_id' => 'User Role Admin ID',
+            'admin_role_id' => 'Admin Role',
             'created_at' => 'Created At',
         ];
     }

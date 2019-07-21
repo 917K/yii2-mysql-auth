@@ -3,20 +3,18 @@
 namespace backend\controllers;
 
 use Yii;
-use common\models\User;
-use common\models\UserStatus;
-use common\models\UserRole;
-use backend\models\search\UserSearch;
+use backend\models\UserAdmin;
+use backend\models\search\UserAdminSearch;
+use yii\data\ActiveDataProvider;
+use common\helpers\C;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
-use yii\filters\AccessControl;
-use common\helpers\C;
 
 /**
- * UserController implements the CRUD actions for User model.
+ * AdminController implements the CRUD actions for UserAdmin model.
  */
-class UserController extends Controller
+class AdminController extends Controller
 {
     /**
      * @inheritdoc
@@ -24,15 +22,6 @@ class UserController extends Controller
     public function behaviors()
     {
         return [
-            'access' => [
-                'class' => AccessControl::className(),
-                'rules' => [
-                    [
-                        'allow' => true,
-                        'roles' => ['@'],
-                    ],
-                ],
-            ],
             'verbs' => [
                 'class' => VerbFilter::className(),
                 'actions' => [
@@ -43,24 +32,23 @@ class UserController extends Controller
     }
 
     /**
-     * Lists all User models.
+     * Lists all UserAdmin models.
      * @return mixed
      */
     public function actionIndex()
     {
-        $searchModel = new UserSearch();
+        $searchModel = new UserAdminSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
         return $this->render('index', [
-            'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
-            'userStatuses' => C::getConstantsByPrefix(UserStatus::class, 'USER_STATUS_'),
-            'userRoles' => C::getConstantsByPrefix(UserRole::class, 'USER_ROLE_'),
+            'searchModel' => $searchModel,
+            'adminRoles' => C::getConstantsByPrefix(\backend\models\AdminRole::class, 'ADMIN_ROLE_'),
         ]);
     }
 
     /**
-     * Displays a single User model.
+     * Displays a single UserAdmin model.
      * @param integer $id
      * @return mixed
      */
@@ -72,13 +60,13 @@ class UserController extends Controller
     }
 
     /**
-     * Creates a new User model.
+     * Creates a new UserAdmin model.
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return mixed
      */
     public function actionCreate()
     {
-        $model = new User();
+        $model = new UserAdmin();
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->id]);
@@ -90,7 +78,7 @@ class UserController extends Controller
     }
 
     /**
-     * Updates an existing User model.
+     * Updates an existing UserAdmin model.
      * If update is successful, the browser will be redirected to the 'view' page.
      * @param integer $id
      * @return mixed
@@ -109,7 +97,7 @@ class UserController extends Controller
     }
 
     /**
-     * Deletes an existing User model.
+     * Deletes an existing UserAdmin model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
      * @param integer $id
      * @return mixed
@@ -122,15 +110,15 @@ class UserController extends Controller
     }
 
     /**
-     * Finds the User model based on its primary key value.
+     * Finds the UserAdmin model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
      * @param integer $id
-     * @return User the loaded model
+     * @return UserAdmin the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
     protected function findModel($id)
     {
-        if (($model = User::findOne($id)) !== null) {
+        if (($model = UserAdmin::findOne($id)) !== null) {
             return $model;
         } else {
             throw new NotFoundHttpException('The requested page does not exist.');

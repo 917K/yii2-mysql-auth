@@ -7,7 +7,7 @@ use common\helpers\C;
 use common\models\UserStatus;
 use common\models\UserRole;
 /* @var $this yii\web\View */
-/* @var $searchModel backend\models\UserSearch */
+/* @var $searchModel backend\models\search\UserSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
 $this->title = 'Users';
@@ -21,7 +21,7 @@ $this->params['breadcrumbs'][] = $this->title;
         'dataProvider' => $dataProvider,
         'filterModel' => $searchModel,
         'columns' => [
-            ['class' => 'yii\grid\SerialColumn'],
+            ['class' => yii\grid\SerialColumn::class],
 
             'id',
             'username',
@@ -56,7 +56,7 @@ $this->params['breadcrumbs'][] = $this->title;
             ],
             'last_login_ip',
             [
-                'class' => 'yii\grid\ActionColumn',
+                'class' => yii\grid\ActionColumn::class,
                 'template' => '{view} {update}'
             ],
         ],
