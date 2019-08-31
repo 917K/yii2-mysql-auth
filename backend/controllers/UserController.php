@@ -5,7 +5,7 @@ namespace backend\controllers;
 use Yii;
 use common\models\User;
 use common\models\UserStatus;
-use common\models\UserRole;
+use common\models\Auth\AuthItem;
 use backend\models\search\UserSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
@@ -55,7 +55,7 @@ class UserController extends Controller
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
             'userStatuses' => C::getConstantsByPrefix(UserStatus::class, 'USER_STATUS_'),
-            'userRoles' => C::getConstantsByPrefix(UserRole::class, 'USER_ROLE_'),
+            'userRoles' => AuthItem::getDropdownValues(),
         ]);
     }
 
@@ -98,12 +98,20 @@ class UserController extends Controller
     public function actionUpdate($id)
     {
         $model = $this->findModel($id);
+        $userRoles = [];
+        if (!empty($model->roles)) {
+            foreach ($model->roles as $role) {
+                $userRoles[] = $role->item_name;
+            }
+        }
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->id]);
         } else {
             return $this->render('update', [
                 'model' => $model,
+                'userRoles' => $userRoles,
+                'allRoles' => AuthItem::getDropdownValues(),
             ]);
         }
     }
@@ -130,7 +138,7 @@ class UserController extends Controller
      */
     protected function findModel($id)
     {
-        if (($model = User::findOne($id)) !== null) {
+        if (($model = User::find($id)->with('roles.itemName')->one()) !== null) {
             return $model;
         } else {
             throw new NotFoundHttpException('The requested page does not exist.');

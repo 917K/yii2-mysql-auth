@@ -54,7 +54,14 @@ $formatter = \Yii::$app->formatter;
             ],
             [
                 'attribute' => 'role_id',
-                'value' => C::getConstantsByPrefix(UserRole::class, 'USER_ROLE_')[$model->role->id],
+                'format' => 'html',
+                'value' => function ($model) {
+                    $roles = [];
+                    foreach ($model->roles as $role) {
+                        $roles[] = Html::encode($role->itemName->description);
+                    }
+                    return implode("<br>", $roles);
+                },
             ],
             'last_login_ip',
         ],

@@ -28,6 +28,9 @@ use common\models\UserStatus;
  */
 class User extends ActiveRecord implements IdentityInterface
 {
+
+    public $role;
+
     /**
      * @inheritdoc
      */
@@ -55,8 +58,11 @@ class User extends ActiveRecord implements IdentityInterface
             [['username', 'auth_key', 'password_hash', 'email'], 'required'],
             ['status_id', 'default', 'value' => UserStatus::USER_STATUS_ACTIVE],
             ['role_id', 'default', 'value' => UserRole::USER_ROLE_BASE],
-            [['role_id'], 'exist', 'targetClass' => UserRole::className(), 'targetAttribute' => ['role_id' => 'id']],
-            [['status_id'], 'exist', 'targetClass' => UserStatus::className(), 'targetAttribute' => ['status_id' => 'id']],
+            ['role_id', 'exist', 'targetClass' => UserRole::className(), 'targetAttribute' => ['role_id' => 'id']],
+            ['status_id', 'exist', 'targetClass' => UserStatus::className(), 'targetAttribute' => ['status_id' => 'id']],
+            ['role', 'default', 'value' => null],
+            ['role', 'each', 'rule' => ['exist', 'targetClass' => Auth\AuthItem::className(), 'targetAttribute' => ['role' => 'name']]],
+            ['role', 'safe'],
         ];
     }
 
@@ -70,6 +76,36 @@ class User extends ActiveRecord implements IdentityInterface
             'status_id' => UserStatus::USER_STATUS_ACTIVE,
             'last_login_ip' => Yii::$app->request->getUserIP(),
         ]);
+    }
+
+    public function beforeSave($insert)
+    {
+        if (!parent::beforeSave($insert)) {
+            return false;
+        }
+
+        return $this->updateRoles();
+    }
+
+    public function updateRoles() {
+        $transaction = Auth\AuthAssignment::getDb()->beginTransaction();
+        try {
+            Auth\AuthAssignment::deleteAll(['user_id' => $this->id]);
+
+            if (null !== $this->role) {
+                $auth = Yii::$app->authManager;
+                $roles = Auth\AuthItem::findAll($this->role);
+                foreach ($roles as $role) {
+                    $auth->assign($role, $this->id);
+                }
+            }
+
+            $transaction->commit();
+            return true;
+        } catch(\Throwable $e) {
+            $transaction->rollBack();
+            throw $e;
+        }
     }
 
     /**
@@ -211,9 +247,17 @@ class User extends ActiveRecord implements IdentityInterface
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getRole()
+    /*public function getRole()
     {
         return $this->hasOne(UserRole::className(), ['id' => 'role_id']);
+    }*/
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getRoles()
+    {
+        return $this->hasMany(Auth\AuthAssignment::className(), ['user_id' => 'id'])/*->select('item_name')*/;
     }
 
     /**

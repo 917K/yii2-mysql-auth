@@ -12,6 +12,9 @@ use common\models\User;
  */
 class UserSearch extends User
 {
+
+    public $role;
+
     /**
      * @inheritdoc
      */
@@ -19,7 +22,7 @@ class UserSearch extends User
     {
         return [
             [['id', 'status_id', 'created_at', 'updated_at', 'last_login_at', 'role_id'], 'integer'],
-            [['username', 'auth_key', 'password_hash', 'password_reset_token', 'email', 'last_login_ip'], 'safe'],
+            [['username', 'auth_key', 'password_hash', 'password_reset_token', 'email', 'last_login_ip', 'role'], 'safe'],
         ];
     }
 
@@ -41,7 +44,7 @@ class UserSearch extends User
      */
     public function search($params)
     {
-        $query = User::find();
+        $query = User::find()->with('roles.itemName');
 
         // add conditions that should always apply here
 

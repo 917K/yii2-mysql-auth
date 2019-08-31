@@ -15,6 +15,7 @@ class m190728_090617_init_rbac extends Migration
 
         // роль продвинутого юзера
         $advancedUserRole = $auth->createRole('advancedUserRole');
+        $advancedUserRole->description = 'Продвинутый юзер';
         $auth->add($advancedUserRole);
         $auth->addChild($advancedUserRole, $advancedUserPermission);
 
@@ -25,6 +26,7 @@ class m190728_090617_init_rbac extends Migration
 
         // базовая админская роль с возможностью входа в админку
         $adminRole = $auth->createRole('adminBaseRole');
+        $adminRole->description = 'Админ (базовая роль)';
         $auth->add($adminRole);
         $auth->addChild($adminRole, $adminBasePermission);
         
