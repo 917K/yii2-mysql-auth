@@ -20,7 +20,9 @@ use common\models\UserRole;
 
     <?= $form->field($model, 'email')->textInput(['maxlength' => true]) ?>
 
-    <?= $form->field($model, 'role')->checkboxList($allRoles, ['value' => $userRoles]) ?>
+    <?= $form->field($model, 'status_id')->dropdownList(C::getConstantsByPrefix(UserStatus::class, 'USER_STATUS_')); ?>
+
+    <?= $form->field($model, 'role_id')->dropdownList(C::getConstantsByPrefix(UserRole::class, 'USER_ROLE_')); ?>
 
     <div class="form-group">
         <?= Html::submitButton($model->isNewRecord ? 'Create' : 'Update', ['class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary']) ?>

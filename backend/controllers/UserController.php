@@ -5,6 +5,7 @@ namespace backend\controllers;
 use Yii;
 use common\models\User;
 use common\models\UserStatus;
+use common\models\UserRole;
 use common\models\Auth\AuthItem;
 use backend\models\search\UserSearch;
 use yii\web\Controller;
@@ -55,7 +56,7 @@ class UserController extends Controller
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
             'userStatuses' => C::getConstantsByPrefix(UserStatus::class, 'USER_STATUS_'),
-            'userRoles' => AuthItem::getDropdownValues(),
+            'userRoles' => C::getConstantsByPrefix(UserRole::class, 'USER_ROLE_'),
         ]);
     }
 
@@ -136,9 +137,13 @@ class UserController extends Controller
      * @return User the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
-    protected function findModel($id)
+    protected function findModel($id, $withAdminRoles = false)
     {
-        if (($model = User::find($id)->with('roles.itemName')->one()) !== null) {
+        $query = User::find($id);
+        if ($withAdminRoles) {
+            $query->with('adminRoles.itemName');
+        }
+        if (($model = $query->one()) !== null) {
             return $model;
         } else {
             throw new NotFoundHttpException('The requested page does not exist.');

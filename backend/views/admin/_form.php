@@ -17,6 +17,8 @@ use common\helpers\C;
 
     <?= $form->field($model, 'admin_role_id')->dropdownList(C::getConstantsByPrefix(\backend\models\AdminRole::class, 'ADMIN_ROLE_')) ?>
 
+    <?php /*$form->field($model, 'role')->checkboxList($allRoles, ['value' => $userRoles]);*/ ?>
+
     <div class="form-group">
         <?= Html::submitButton($model->isNewRecord ? Yii::t('app', 'Create') : Yii::t('app', 'Update'), ['class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary']) ?>
     </div>

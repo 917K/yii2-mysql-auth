@@ -29,7 +29,7 @@ use common\models\UserStatus;
 class User extends ActiveRecord implements IdentityInterface
 {
 
-    public $role;
+    //public $role;
 
     /**
      * @inheritdoc
@@ -60,9 +60,9 @@ class User extends ActiveRecord implements IdentityInterface
             ['role_id', 'default', 'value' => UserRole::USER_ROLE_BASE],
             ['role_id', 'exist', 'targetClass' => UserRole::className(), 'targetAttribute' => ['role_id' => 'id']],
             ['status_id', 'exist', 'targetClass' => UserStatus::className(), 'targetAttribute' => ['status_id' => 'id']],
-            ['role', 'default', 'value' => null],
+            /*['role', 'default', 'value' => null],
             ['role', 'each', 'rule' => ['exist', 'targetClass' => Auth\AuthItem::className(), 'targetAttribute' => ['role' => 'name']]],
-            ['role', 'safe'],
+            ['role', 'safe'],*/
         ];
     }
 
@@ -78,14 +78,14 @@ class User extends ActiveRecord implements IdentityInterface
         ]);
     }
 
-    public function beforeSave($insert)
+    /*public function beforeSave($insert)
     {
         if (!parent::beforeSave($insert)) {
             return false;
         }
 
         return $this->updateRoles();
-    }
+    }*/
 
     public function updateRoles() {
         $transaction = Auth\AuthAssignment::getDb()->beginTransaction();
@@ -247,15 +247,15 @@ class User extends ActiveRecord implements IdentityInterface
     /**
      * @return \yii\db\ActiveQuery
      */
-    /*public function getRole()
+    public function getRole()
     {
         return $this->hasOne(UserRole::className(), ['id' => 'role_id']);
-    }*/
+    }
 
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getRoles()
+    public function getAdminRoles()
     {
         return $this->hasMany(Auth\AuthAssignment::className(), ['user_id' => 'id'])/*->select('item_name')*/;
     }

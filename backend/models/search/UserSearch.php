@@ -44,7 +44,7 @@ class UserSearch extends User
      */
     public function search($params)
     {
-        $query = User::find()->with('roles.itemName');
+        $query = User::find()->with('adminRoles.itemName');
 
         // add conditions that should always apply here
 

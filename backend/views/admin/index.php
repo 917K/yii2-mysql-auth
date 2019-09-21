@@ -42,6 +42,20 @@ $this->params['breadcrumbs'][] = $this->title;
                     return C::getConstantsByPrefix(\backend\models\AdminRole::class, 'ADMIN_ROLE_')[$model->role->id];
                 }
             ],
+            /*[
+                'attribute' => 'role',
+                'label' => 'Admin Roles',
+                'format' => 'html',
+                'filter' => $userRoles,
+                'filterInputOptions' => ['prompt' => 'All', 'class' => 'form-control', 'id' => null],
+                'content' => function ($model, $key, $index, $column) {
+                    $roles = [];
+                    foreach ($model->roles as $role) {
+                        $roles[] = Html::encode($role->itemName->description);
+                    }
+                    return implode("<br>", $roles);
+                }
+            ],*/
             [
                 'attribute' => 'created_at',
                 'format' => ['date', 'php:Y-m-d H:i']

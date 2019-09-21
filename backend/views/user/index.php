@@ -5,6 +5,8 @@ use yii\grid\GridView;
 use yii\widgets\Pjax;
 use common\helpers\C;
 use common\models\UserStatus;
+use common\models\UserRole;
+
 /* @var $this yii\web\View */
 /* @var $searchModel backend\models\search\UserSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
@@ -45,26 +47,12 @@ $this->params['breadcrumbs'][] = $this->title;
                 'attribute' => 'last_login_at',
                 'format' => ['date', 'php:Y-m-d H:i']
             ],
-            /*[
+            [
                 'attribute' => 'role_id',
                 'filter' => $userRoles,
                 'filterInputOptions' => ['prompt' => 'All', 'class' => 'form-control', 'id' => null],
                 'content' => function ($model, $key, $index, $column) {
                     return C::getConstantsByPrefix(UserRole::class, 'USER_ROLE_')[$model->role->id];
-                }
-            ],*/
-            [
-                'attribute' => /*'roles.itemName'*/'role',
-                'label' => 'Roles',
-                'format' => 'html',
-                'filter' => $userRoles,
-                'filterInputOptions' => ['prompt' => 'All', 'class' => 'form-control', 'id' => null],
-                'content' => function ($model, $key, $index, $column) {
-                    $roles = [];
-                    foreach ($model->roles as $role) {
-                        $roles[] = Html::encode($role->itemName->description);
-                    }
-                    return implode("<br>", $roles);
                 }
             ],
             'last_login_ip',
